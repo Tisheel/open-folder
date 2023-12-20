@@ -32,7 +32,7 @@ app.post('/upload', (req, res) => {
         })
     }
 
-    files.mv(__dirname + '/uploads/' + files.name, (err) => {
+    files.mv(path.join(__dirname, 'uploads', files.name), (err) => {
         if (err) {
             console.log(err)
             res.json({
@@ -48,7 +48,7 @@ app.post('/upload', (req, res) => {
 
 app.get('/files', (req, res) => {
 
-    fs.readdir('./uploads', (err, files) => {
+    fs.readdir(path.join(__dirname, 'uploads'), (err, files) => {
 
         if (err) {
             return res.json({
@@ -64,7 +64,7 @@ app.get('/files', (req, res) => {
 
 app.get('/delete/file/:name', (req, res) => {
     const { name } = req.params
-    fs.unlinkSync('./uploads/' + name)
+    fs.unlinkSync(path.join(__dirname, 'uploads', name))
     res.redirect('/')
 })
 
