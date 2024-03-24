@@ -26,7 +26,7 @@ app.post('/upload', upload.array("files"), async (req, res) => {
 
         const files = req.files
 
-        if (files === null) {
+        if (files.length === 0) {
             return res.json({
                 message: 'No File.'
             })
