@@ -9,7 +9,7 @@
     <title>Open Folders</title>
 </head>
 
-<body>
+<body data-bs-theme="dark">
 
     <h1 class="p-1">Open Folder</h1>
 
@@ -30,7 +30,6 @@
                     <th scope="col">#</th>
                     <th scope="col">File</th>
                     <th scope="col">#</th>
-                    <th scope="col">#</th>
                 </tr>
             </thead>
             <tbody id="files"></tbody>
@@ -45,20 +44,16 @@
 
             let html = ''
 
-            fetch('/files').then((res) => {
+            fetch('/all').then((res) => {
                 return res.json()
             }).then((files) => {
-                console.log(files)
                 files.forEach((file, index) => {
                     html += `
                     <tr>
                         <th scope="row">${index + 1}</th>
-                        <td>${file}</td>
+                        <td>${file.filename}</td>
                         <td>
-                            <a href='/file/${file}' download>download</a>
-                        </td>
-                        <td>
-                            <a href='/delete/file/${file}'>delete</a>
+                            <a href='${file.download}'>download</a>
                         </td>
                     </tr>
                     `
