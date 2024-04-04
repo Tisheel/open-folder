@@ -37,16 +37,19 @@
     </div>
 
     <script>
-
         const displayFiles = document.getElementById('files')
 
-        function getFiles() {
+        async function getFiles() {
 
+            displayFiles.innerHTML = 'Loading...'
             let html = ''
 
-            fetch('/all').then((res) => {
+            await fetch('/all').then((res) => {
                 return res.json()
             }).then((files) => {
+                if (files.length === 0) {
+                    return displayFiles.innerHTML = 'No files found'
+                }
                 files.forEach((file, index) => {
                     html += `
                     <tr>
@@ -60,12 +63,13 @@
                 })
                 displayFiles.innerHTML = html
             }).catch(() => {
-                alert('Somthing went wrong.')
+                displayFiles.innerHTML = 'Somthing went wrong.'
             })
 
         }
 
-        getFiles()        
+        window.onload = getFiles
+
     </script>
 
 </body>
