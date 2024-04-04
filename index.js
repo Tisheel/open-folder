@@ -1,7 +1,7 @@
 const dotenv = require('dotenv')
 const express = require('express')
 const path = require('path')
-const { ref, uploadBytes, listAll, getDownloadURL } = require("firebase/storage")
+const { ref, uploadBytes, listAll, getDownloadURL, deleteObject } = require("firebase/storage")
 const { storage } = require('./config')
 const multer = require("multer")
 const upload = multer({ storage: multer.memoryStorage() })
@@ -54,20 +54,55 @@ app.post('/upload', upload.array("files"), async (req, res) => {
 
 app.get('/all', async (req, res) => {
 
-    const reference = ref(storage)
-    const list = await listAll(reference)
+    try {
 
-    let files = []
+        const reference = ref(storage)
+        const list = await listAll(reference)
 
-    for (let item of list.items) {
-        const fileRef = ref(storage, item.fullPath)
-        const download = await getDownloadURL(fileRef)
-        files.push({ filename: item.name, download })
+        let files = []
+
+        for (let item of list.items) {
+            const fileRef = ref(storage, item.fullPath)
+            const download = await getDownloadURL(fileRef)
+            files.push({ filename: item.name, download })
+        }
+
+        res.status(200).json(files)
+
+    } catch (error) {
+
+        console.log(error)
+        res.status(500).json({
+            message: 'Somthing went wrong'
+        })
+
     }
 
-    res.status(200).json(files)
-
 })
+
+// delete all files
+const deleteAllFiles = async () => {
+
+    try {
+
+        const reference = ref(storage)
+        const list = await listAll(reference)
+
+        for (let item of list.items) {
+            const fileRef = ref(storage, item.fullPath)
+            await deleteObject(fileRef)
+        }
+
+        console.log('Clean Up: ' + new Date.now())
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+// delete file every 24 hours
+setInterval(deleteAllFiles, 86400000)
 
 app.listen(PORT, () => {
     console.log(`Server running on PORT: ${PORT}`)
