@@ -80,30 +80,6 @@ app.get('/all', async (req, res) => {
 
 })
 
-// delete all files
-const deleteAllFiles = async () => {
-
-    try {
-
-        const reference = ref(storage)
-        const list = await listAll(reference)
-
-        for (let item of list.items) {
-            const fileRef = ref(storage, item.fullPath)
-            await deleteObject(fileRef)
-        }
-
-        console.log('Clean Up: ' + new Date.now())
-
-    } catch (error) {
-        console.log(error)
-    }
-
-}
-
-// delete file every 24 hours
-setInterval(deleteAllFiles, 86400000)
-
 app.listen(PORT, () => {
     console.log(`Server running on PORT: ${PORT}`)
 })
